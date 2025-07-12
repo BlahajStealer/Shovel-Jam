@@ -1,17 +1,15 @@
 using UnityEngine;
 
-public class sleep : MonoBehaviour
+public class Chair : MonoBehaviour
 {
     public GameObject E;
-    public GameObject Player;
     public bool inRange;
-    PlayerMovement playerMovement;
 
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        playerMovement = Player.GetComponent<PlayerMovement>();
-        E.SetActive(false);
         inRange = false;
+        E.SetActive(false);
     }
 
     // Update is called once per frame
@@ -26,7 +24,7 @@ public class sleep : MonoBehaviour
             E.SetActive(true);
             inRange = true;
         }
-    }
+    }    
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
