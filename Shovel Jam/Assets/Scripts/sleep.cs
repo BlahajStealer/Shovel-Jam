@@ -7,6 +7,7 @@ public class sleep : MonoBehaviour
     public bool inRange;
     PlayerMovement playerMovement;
 
+
     void Start()
     {
         playerMovement = Player.GetComponent<PlayerMovement>();
@@ -17,11 +18,14 @@ public class sleep : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (playerMovement.inComp == true)
+        {
+            E.SetActive(false);
+        }
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && playerMovement.inComp == false)
         {
             E.SetActive(true);
             inRange = true;
@@ -35,4 +39,5 @@ public class sleep : MonoBehaviour
             inRange = false;
         }
     }
+
 }

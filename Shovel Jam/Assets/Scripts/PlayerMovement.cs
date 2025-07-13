@@ -2,48 +2,84 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    public GameObject CompCan;
+    public GameObject ChairObj;
+    public GameObject ComputerBoot;
+    public GameObject ComputerScreen;
+    public bool inComp;
+    Chair chair;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     public GameObject Bed;
     sleep Sleep;
+    public GameObject Window;
+    public string animationName;
     public float speed = 12f;
     public float horizontal;
     public float jumpPower = 16f;
     private bool isFacingRight = true;
-    public float ClockTime;
+    public float ClockTime; 
     public float HourCount;
     public float DayCount;
     public float YearCount;
-
+    animation Anim;
     public float Monies;
     public float WorkSpeed;
     public bool CloseToWork;
 
+    public float BootUp;
+
     void Start()
     {
+        ComputerScreen.SetActive(false);
+        BootUp = 0f;
+        chair = ChairObj.GetComponent<Chair>(); ;
+        CompCan.SetActive(false);
+        Anim = Window.GetComponent<animation>();    
         Monies = 0;
         Sleep = Bed.GetComponent<sleep>();
         ClockTime = 0f;
-        DayCount = 0;
-        HourCount = 0;
+        DayCount = 1;
+        HourCount = 8;
         YearCount = 0;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("WorkStation"))
-        {
 
-        }
-    }
     // Update is called once per frame
     void Update()
     {
+        if (inComp)
+        {
+            BootUp += Time.deltaTime;
+            if (BootUp >= 2f)
+            {
+                ComputerBoot.SetActive(false);
+                ComputerScreen.SetActive(true);
+            }
+        }
         BedFunc();
         ClockFunc();
+
+        if (chair.inRange && Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log("Activated");
+            CompCan.SetActive(true);
+            inComp = true;
+        }
+        if (inComp == true && Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("Deactivated");
+            inComp = false;
+            ComputerScreen.SetActive(false);
+            CompCan.SetActive(false);
+
+        }
+
         ClockTime += Time.deltaTime;
         horizontal = Input.GetAxisRaw("Horizontal");
+
 
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
@@ -59,23 +95,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void BedFunc()
     {
-        if (Input.GetKeyDown(KeyCode.E) && Sleep.inRange)
+        if (Input.GetKeyDown(KeyCode.E) && Sleep.inRange && HourCount >= 20)
         {
-            if ((HourCount + 10) >= 24)
-            {
-                HourCount += 10;
-                HourCount -= 24;
-                DayCount++;
-            } else
-            {
-                HourCount += 10;
-            }
+            Anim.AnimRestart();
+            HourCount = 8;
+            DayCount++;
         }
     }
 
     private void ClockFunc()
     {
-        if (ClockTime >= 45)
+        if (ClockTime >= 20)
         {
             HourCount++;
             ClockTime = 0;
@@ -94,7 +124,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+        if (!inComp)
+        {
+            rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+        }
     }
     
     private bool IsGrounded()
@@ -104,13 +137,15 @@ public class PlayerMovement : MonoBehaviour
     
     private void Flip()
     {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        if (!inComp)
         {
-            isFacingRight = false;
-            Vector2 localScale = transform.localScale;
-            transform.localScale = localScale;
+            if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+            {
+                isFacingRight = false;
+                Vector2 localScale = transform.localScale;
+                transform.localScale = localScale;
 
+            }
         }
-
     }
 }
