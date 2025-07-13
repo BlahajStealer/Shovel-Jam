@@ -29,10 +29,14 @@ public class PlayerMovement : MonoBehaviour
     public float WorkSpeed;
     public bool CloseToWork;
 
+    Minigames Minigames;
+    
+
     public float BootUp;
 
     void Start()
     {
+        Minigames = ComputerScreen.GetComponent<Minigames>();
         ComputerScreen.SetActive(false);
         BootUp = 0f;
         chair = ChairObj.GetComponent<Chair>(); ;
@@ -66,12 +70,15 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("Activated");
             CompCan.SetActive(true);
+            ComputerBoot.SetActive(true);
+            BootUp = 0f;
             inComp = true;
         }
-        if (inComp == true && Input.GetKeyDown(KeyCode.Escape))
+        if (inComp == true && Input.GetKeyDown(KeyCode.Escape) && Minigames.InMarket == false && Minigames.inEmail == false)
         {
             Debug.Log("Deactivated");
             inComp = false;
+
             ComputerScreen.SetActive(false);
             CompCan.SetActive(false);
 
